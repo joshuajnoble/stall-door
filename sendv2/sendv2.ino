@@ -8,10 +8,12 @@ int ls;
 boolean occupied = false;
 unsigned char data[1];
 
+#define HALL_POWER_PIN 2
 #define HALL_PIN 3
 
 void setup() 
 {  
+  pinMode(HALL_POWER_PIN, OUTPUT);
   pinMode(HALL_PIN, INPUT);
   MANCHESTER.SetTxPin(4);
 }
@@ -21,8 +23,10 @@ void loop()
  
   ADCSRA &= ~(1<<ADEN); //Disable ADC, saves ~230uA
   setup_watchdog(7); //Setup watchdog to go off after 1sec
+  digitalWrite(HALL_POWER_PIN, LOW); // power down hall sensor
   sleep_mode(); //Go to sleep! Wake up 1sec later and check water
   
+  digitalWrite(HALL_POWER_PIN, HIGH); // power up hall sensor
   ADCSRA |= (1<<ADEN); //Enable ADC
   int hall = analogRead(HALL_PIN);
    
